@@ -25,7 +25,7 @@ html, body {
   /* padding-right: 2em; */
 }
 
-.popover {
+.micro-popover {
   position: absolute;
   z-index: 9999;
   top: 0; left: 0;

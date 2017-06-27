@@ -4,7 +4,6 @@ A tiny, fast, configurable popover in 2.5kb. [Demo](http://estrattonbailey.com/m
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](http://standardjs.com)
 
 ## Usage
-Grid with four items:
 ```javascript
 import Popover from 'micro-popover'
 
@@ -23,6 +22,15 @@ const pop = new Popover({
 
 target.addEventListener('mouseenter', pop.pin)
 target.addEventListener('mouseleave', pop.unpin)
+```
+
+Required CSS:
+```css
+.micro-popover {
+  position: absolute;
+  z-index: 9999;
+  top: 0; left: 0;
+}
 ```
 
 MIT License

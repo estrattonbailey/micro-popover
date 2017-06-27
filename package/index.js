@@ -103,8 +103,7 @@ export default class Popover {
 
   createPopover (pop) {
     const popover = document.createElement('div')
-    popover.id = 'popover'
-    popover.className = 'popover'
+    popover.className = 'micro-popover'
 
     typeof pop === 'string' ? popover.innerHTML = pop : popover.appendChild(pop)
 
