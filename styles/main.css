@@ -1,0 +1,97 @@
+@import 'lib/display';
+@import 'lib/positioning';
+@import 'lib/flexbox';
+@import 'lib/align';
+@import 'lib/floats';
+@import 'lib/z-index';
+@import 'lib/typography';
+@import 'lib/buttons';
+@import 'lib/forms';
+@import 'lib/lists';
+@import 'lib/tables';
+@import 'lib/spacing';
+
+html, body {
+  font-family: monospace;
+}
+
+* {
+  box-sizing: border-box
+}
+
+.outer {
+  height: 100vh;
+  /* padding-left: 2em; */
+  /* padding-right: 2em; */
+}
+
+.micro-popover {
+  position: absolute;
+  z-index: 9999;
+  top: 0; left: 0;
+}
+
+.my-popover {
+  position: relative;
+  padding: 1em;
+  background-color: tomato;
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+  color: white;
+
+  .is-visible & {
+    opacity: 1;
+  }
+  .is-hiding & {
+    opacity: 0;
+  }
+
+  &::after {
+    content:'';
+    display: block;
+    position: absolute;
+    width: 0; height: 0;
+    margin: auto;
+  }
+
+  &.left {
+    margin-right: 1em;
+
+    &::after {
+      border-left: 10px solid tomato;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      top: 0; bottom: 0; right: -9px;
+    }
+  }
+  &.right {
+    margin-left: 1em;
+
+    &::after {
+      border-right: 10px solid tomato;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      top: 0; bottom: 0; left: -9px;
+    }
+  }
+  &.top {
+    margin-bottom: 1em;
+
+    &::after {
+      border-top: 10px solid tomato;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      right: 0; bottom: -9px; left: 0;
+    }
+  }
+  &.bottom {
+    margin-top: 1em;
+
+    &::after {
+      border-bottom: 10px solid tomato;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      right: 0; top: -9px; left: 0;
+    }
+  }
+}
