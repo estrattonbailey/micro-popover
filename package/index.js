@@ -6,7 +6,7 @@ export default class Popover {
     target,
     popover = null,
     position = 'bottom',
-    transitionSpeed = 200
+    transitionSpeed = 0
   }) {
     this.target = target
     this.popover = this.createPopover(popover)
@@ -15,7 +15,8 @@ export default class Popover {
 
     this.state = {
       pinned: false,
-      busy: false
+      busy: false,
+      requestClose: false
     }
 
     this.pin = this.pin.bind(this)
@@ -43,7 +44,13 @@ export default class Popover {
   unblock () {
     this.setState({
       busy: false
+    }, () => {
+      this.state.requestClose && this.unpin()
     })
+  }
+
+  toggle () {
+    this.state.pinned ? this.unpin() : this.pin()
   }
 
   pin () {
@@ -68,9 +75,13 @@ export default class Popover {
     document.addEventListener('click', this.isExternalClick)
   }
 
-  unpin () {
+  unpin (force) {
+    this.setState({
+      requestClose: true
+    })
+
     tarry(() => {
-      if (this.state.busy || !this.state.pinned) return
+      if (!force && (this.state.busy || !this.state.pinned)) return
 
       this.setState({
         busy: true
@@ -87,7 +98,8 @@ export default class Popover {
         this.popover.classList.remove('is-visible')
         this.setState({
           busy: false,
-          pinned: false
+          pinned: false,
+          requestClose: false
         })
       })
 
@@ -96,7 +108,10 @@ export default class Popover {
   }
 
   isExternalClick (e) {
-    if (e.target !== this.popover && !this.popover.contains(e.target)) {
+    if (
+      (e.target !== this.popover && !this.popover.contains(e.target)) &&
+      (e.target !== this.target && !this.target.contains(e.target))
+    ) {
       this.unpin()
     }
   }
