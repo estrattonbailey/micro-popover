@@ -24,6 +24,9 @@ export default class Popover {
     this.block = this.block.bind(this)
     this.unblock = this.unblock.bind(this)
     this.isExternalClick = this.isExternalClick.bind(this)
+    this.handleKeyup = this.handleKeyup.bind(this)
+
+    this.focusNode = null
   }
 
   setState (state, cb) {
@@ -60,19 +63,28 @@ export default class Popover {
       busy: true
     })
 
+    this.focusNode = document.activeElement
+
     const render = tarry(() => document.body.appendChild(this.popover))
     const pin = tarry(() => tack(this.popover, this.target, this.position))
-    const show = tarry(() => this.popover.classList.add('is-visible'))
+    const show = tarry(() => {
+      this.popover.classList.add('is-visible')
+      this.popover.setAttribute('tabindex', '0')
+      this.popover.setAttribute('aria-hidden', 'false')
+    })
+    const focus = tarry(() => this.popover.focus())
     const done = tarry(() => this.setState({
       busy: false,
       pinned: true
     }))
 
-    queue(render, pin, show(0), done)()
+    queue(render, pin, show(0), focus(0), done)()
 
     this.popover.addEventListener('mouseenter', this.block)
     this.popover.addEventListener('mouseleave', this.unblock)
-    document.addEventListener('click', this.isExternalClick)
+    window.addEventListener('click', this.isExternalClick)
+    window.addEventListener('keyup', this.handleKeyup)
+    window.addEventListener('resize', this.unpin)
   }
 
   unpin (force) {
@@ -80,19 +92,22 @@ export default class Popover {
       requestClose: true
     })
 
-    tarry(() => {
-      if (!force && (this.state.busy || !this.state.pinned)) return
+    if (!force && (this.state.busy || !this.state.pinned)) return
 
+    tarry(() => {
       this.setState({
         busy: true
       })
 
       this.popover.removeEventListener('mouseenter', this.block)
       this.popover.removeEventListener('mouseleave', this.unblock)
-      document.removeEventListener('click', this.isExternalClick)
+      window.removeEventListener('click', this.isExternalClick)
+      window.removeEventListener('keyup', this.handleKeyup)
+      window.removeEventListener('resize', this.unpin)
 
       const hide = tarry(() => this.popover.classList.add('is-hiding'))
       const remove = tarry(() => document.body.removeChild(this.popover))
+      const blur = tarry(() => this.focusNode.focus())
       const done = tarry(() => {
         this.popover.classList.remove('is-hiding')
         this.popover.classList.remove('is-visible')
@@ -103,8 +118,12 @@ export default class Popover {
         })
       })
 
-      queue(hide, remove(this.transitionSpeed), done)()
+      queue(hide, remove(this.transitionSpeed), blur, done)()
     }, 0)()
+  }
+
+  handleKeyup (e) {
+    e.keyCode === 27 && this.unpin()
   }
 
   isExternalClick (e) {
@@ -119,6 +138,10 @@ export default class Popover {
   createPopover (pop) {
     const popover = document.createElement('div')
     popover.className = 'micro-popover'
+
+    popover.role = 'dialog'
+    popover.setAttribute('aria-label', 'Share Dialog')
+    popover.setAttribute('aria-hidden', 'true')
 
     typeof pop === 'string' ? popover.innerHTML = pop : popover.appendChild(pop)
 
