@@ -17,7 +17,8 @@ const pop = new Popover({
     </div>
   `,
   position: 'left',
-  transitionSpeed: 200 // for css transitions
+  transitionSpeed: 200, // for css transitions
+  onChange: ({ pinned }) => {...} // boolean
 })
 
 target.addEventListener('mouseenter', pop.pin)

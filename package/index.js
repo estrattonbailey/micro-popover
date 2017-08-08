@@ -6,12 +6,14 @@ export default class Popover {
     target,
     popover = null,
     position = 'bottom',
-    transitionSpeed = 0
+    transitionSpeed = 0,
+    onChange = null
   }) {
     this.target = target
     this.popover = this.createPopover(popover)
     this.position = position
     this.transitionSpeed = transitionSpeed
+    this.onChange = onChange
 
     this.state = {
       pinned: false,
@@ -85,6 +87,10 @@ export default class Popover {
     window.addEventListener('click', this.isExternalClick)
     window.addEventListener('keyup', this.handleKeyup)
     window.addEventListener('resize', this.unpin)
+
+    this.onChange && this.onChange({
+      pinned: true
+    })
   }
 
   unpin (force) {
@@ -119,6 +125,10 @@ export default class Popover {
       })
 
       queue(hide, remove(this.transitionSpeed), blur, done)()
+
+      this.onChange && this.onChange({
+        pinned: false
+      })
     }, 0)()
   }
 
