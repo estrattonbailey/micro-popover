@@ -85,6 +85,7 @@ export default class Popover {
     this.popover.addEventListener('mouseenter', this.block)
     this.popover.addEventListener('mouseleave', this.unblock)
     window.addEventListener('click', this.isExternalClick)
+    window.addEventListener('touchstart', this.isExternalClick)
     window.addEventListener('keyup', this.handleKeyup)
     window.addEventListener('resize', this.unpin)
 
@@ -108,6 +109,7 @@ export default class Popover {
       this.popover.removeEventListener('mouseenter', this.block)
       this.popover.removeEventListener('mouseleave', this.unblock)
       window.removeEventListener('click', this.isExternalClick)
+      window.removeEventListener('touchstart', this.isExternalClick)
       window.removeEventListener('keyup', this.handleKeyup)
       window.removeEventListener('resize', this.unpin)
 
